@@ -17,11 +17,15 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
 
 
-
-
     public Camera mainCamera;
     private Vector3 camForward;
     private Vector3 camRight;
+
+    public bool isOnSlope = false;
+    private Vector3 hitNormal;
+    public float slideVelocity;
+    public float slopeForceDown;
+
 
 
 
@@ -108,8 +112,30 @@ public class PlayerController : MonoBehaviour
             movePlayer.y = fallvelocity;
         }
 
+        sliderDown();
+
     }
 
+    public void sliderDown()
+    {
+        isOnSlope = Vector3.Angle(Vector3.up, hitNormal) >= player.slopeLimit;
 
+        if (isOnSlope)
+        {
+            movePlayer.x += ((1f - hitNormal.y) *  hitNormal.x) * slideVelocity;
+            movePlayer.z += ((1f - hitNormal.y) *  hitNormal.z) * slideVelocity;
+
+            movePlayer.y += slopeForceDown;
+
+        }
+    }
+
+    // se ejecuta cuando el player choca con algo
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+     
+        hitNormal = hit.normal;
+
+    }
 
 }
